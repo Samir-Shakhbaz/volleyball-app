@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Register</title>
+</head>
+<body>
+<h1>User Registration</h1>
+
+<!-- Error Message -->
+<div th:if="${error}" style="color: red;">
+  <p th:text="${error}"></p>
+</div>
+
+<form action="/register" method="post">
+  <!-- User Details -->
+  <h2>User Details</h2>
+  <input type="text" name="username" placeholder="Username" required>
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="password" name="password" placeholder="Password" required>
+  <input type="hidden" name="role" value="PLAYER">
+
+  <!-- Player Profile Details -->
+  <h2>Player Profile</h2>
+  <textarea name="bio" placeholder="Tell us about yourself"></textarea>
+  <input type="number" name="skillLevel" placeholder="Skill Level (1-10)" min="1" max="10">
+  <select name="motivation" required>
+    <option value="" disabled selected>Select Motivation</option>
+    <option value="Recreational">Recreational</option>
+    <option value="Competitive">Competitive</option>
+  </select>
+  <input type="number" step="0.01" name="height" placeholder="Height (meters or feet)">
+  <input type="text" name="homeCity" placeholder="Home City">
+  <select name="gender" required>
+    <option value="" disabled selected>Select Gender</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <button type="submit">Register</button>
+</form>
+</body>
+</html>

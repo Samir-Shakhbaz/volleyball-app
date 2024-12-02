@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Dashboard</title>
+</head>
+<body>
+<h1>Welcome, <span th:text="${user.username}"></span>!</h1>
+<a th:href="@{/logout}">Logout</a>
+<a th:href="@{/}">Back to Home</a>
+
+<!-- Profile Section -->
+<h2>Your Profile</h2>
+<div>
+    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+    <p th:if="${user.playerProfile != null}">
+        <strong>Skill Level:</strong> <span th:text="${user.playerProfile.skillLevel}"></span>
+    </p>
+    <p th:if="${user.playerProfile != null}">
+        <strong>Motivation:</strong> <span th:text="${user.playerProfile.motivation}"></span>
+    </p>
+    <p th:if="${user.playerProfile == null}">
+        No profile information available. <a th:href="@{/profile/create}">Create Profile</a>
+    </p>
+</div>
+
+<hr>
+
+<!-- Simple Search -->
+<h2>Simple Search</h2>
+<form action="/dashboard" method="get">
+    <label for="simpleLocation">Search by Location:</label>
+    <select id="simpleLocation" name="simpleLocation">
+        <option value="" disabled selected>Choose Location</option>
+        <option th:each="location : ${locations}" th:value="${location}" th:text="${location}"></option>
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+
+<hr>
+
+<!-- Advanced Search -->
+<h2>Advanced Search</h2>
+<form action="/dashboard" method="get">
+    <!-- Location -->
+    <label for="location">Location:</label>
+    <select id="location" name="location">
+        <option value="" disabled selected>Choose Location</option>
+        <option th:each="location : ${locations}" th:value="${location}" th:text="${location}"></option>
+    </select>
+
+    <!-- Skill Level -->
+    <label for="skillLevel">Skill Level:</label>
+    <input type="number" id="skillLevel" name="skillLevel" placeholder="1-13">
+
+    <!-- Facility -->
+    <label for="facility">Facility:</label>
+    <select id="facility" name="facility">
+        <option value="" disabled selected>Choose Facility</option>
+        <option th:each="facility : ${facilities}" th:value="${facility.name}" th:text="${facility.name}"></option>
+    </select>
+
+    <!-- Date -->
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date">
+
+    <!-- Gender Format -->
+    <label for="genderFormat">Gender:</label>
+    <select id="genderFormat" name="genderFormat">
+        <option value="" disabled selected>Choose Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+    </select>
+
+
+    <!-- Event Name -->
+    <label for="eventName">Event Name:</label>
+    <select id="eventName" name="eventName">
+        <option value="" disabled selected>Choose Event</option>
+        <option th:each="event : ${eventNames}" th:value="${event}" th:text="${event}"></option>
+    </select>
+
+    <!-- Team Size -->
+    <label for="teamSize">Team Size:</label>
+    <input type="number" id="teamSize" name="teamSize" placeholder="Enter Team Size">
+
+    <!-- Buttons -->
+    <button type="submit">Search</button>
+    <button type="reset">Reset</button>
+</form>
+
+<hr>
+
+<!-- Events Section -->
+<h2>Your Events</h2>
+<ul>
+    <li th:each="event : ${events}">
+        <strong th:text="${event.name}"></strong>
+        <span th:text="' - ' + ${event.date}"></span>
+        <span th:text="' at ' + ${event.time}"></span>
+        <span th:text="' - Location: ' + ${event.location}"></span>
+        <span th:text="' - Gender: ' + ${event.genderFormat}"></span> <!-- Add Gender -->
+        <span th:text="' - Skill Level: ' + ${event.skillLevel}"></span> <!-- Add Skill Level -->
+        <a th:href="@{'/events/join/' + ${event.id}}">Join</a>
+    </li>
+</ul>
+
+
+<footer>
+    <p>&copy; 2024 Volleyball App. All rights reserved.</p>
+</footer>
+</body>
+</html>
