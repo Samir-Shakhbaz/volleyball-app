@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Private Chat</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs"></script>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    #chat-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    }
+    #messages {
+        list-style: none;
+        padding: 0;
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    #messages li {
+        padding: 5px 10px;
+        margin: 5px 0;
+        border-bottom: 1px solid #eee;
+    }
+    #message-input {
+        width: calc(100% - 100px);
+        margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+<div id="chat-container">
+  <h2>Private Chat</h2>
+  <div>
+    <label for="receiver-id">Recipient ID:</label>
+    <input type="text" id="receiver-id" placeholder="Enter recipient's user ID">
+    <button onclick="fetchChatHistory()">Load History</button>
+  </div>
+  <ul id="messages"></ul>
+  <div>
+    <input type="text" id="message-input" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  let stompClient;
+  let senderId = 1; // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!Replace with the logged-in user's ID
+  let receiverId = null;
+
+  // Connect to WebSocket
+  function connectWebSocket() {
+      const socket = new SockJS('/chat');
+      stompClient = Stomp.over(socket);
+
+      stompClient.connect({}, function () {
+          console.log('Connected to WebSocket');
+          // Subscribe to private messages
+          stompClient.subscribe('/user/queue/private', function (message) {
+              displayMessage(JSON.parse(message.body).content);
+          });
+      });
+  }
+
+  // Fetch private chat history
+  function fetchChatHistory() {
+      receiverId = document.getElementById('receiver-id').value;
+      if (!receiverId) {
+          alert('Please enter a recipient ID');
+          return;
+      }
+
+      fetch(`/api/private-messages?user1Id=${senderId}&user2Id=${receiverId}`)
+          .then(response => response.json())
+          .then(messages => {
+              const messagesList = document.getElementById('messages');
+              messagesList.innerHTML = ''; // Clear existing messages
+              messages.forEach(msg => {
+                  displayMessage(msg.content);
+              });
+          });
+  }
+
+  // Display a message
+  function displayMessage(content) {
+      const messagesList = document.getElementById('messages');
+      const li = document.createElement('li');
+      li.textContent = content;
+      messagesList.appendChild(li);
+  }
+
+  // Send a private message
+  function sendMessage() {
+      const messageInput = document.getElementById('message-input');
+      const content = messageInput.value.trim();
+
+      if (!content || !receiverId) {
+          alert('Please enter a message and recipient ID');
+          return;
+      }
+
+      const message = {
+          senderId: senderId,
+          receiverId: receiverId,
+          content: content
+      };
+
+      stompClient.send('/app/private-message', {}, JSON.stringify(message));
+      messageInput.value = ''; // Clear the input field
+  }
+
+  // Initialize WebSocket connection
+  connectWebSocket();
+</script>
+</body>
+</html>

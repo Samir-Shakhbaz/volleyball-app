@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/facilities")
-public class FacilityController {
+public class FacilityControllerREST {
 
     @Autowired
     private FacilityService facilityService;

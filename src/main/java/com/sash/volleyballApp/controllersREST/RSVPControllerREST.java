@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/events")
-public class RSVPController {
+public class RSVPControllerREST {
 
     @Autowired
     private RSVPService rsvpService;

@@ -21,4 +21,5 @@ public class PlayerProfile {
     private Double height;     // Optional, in meters or feet
     private String homeCity;
     private String gender;     // Add this field for gender (e.g., Male, Female, Other)
+    private String profileImageUrl;
 }

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        ul#messages {
+            list-style: none;
+            padding: 0;
+            width: 50%;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+            margin-bottom: 20px;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        input#messageInput {
+            width: 40%;
+            margin-right: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<h1>Public Chat</h1>
+<ul id="messages"></ul>
+<div>
+    <input id="messageInput" type="text" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+    let stompClient;
+
+    function connectWebSocket() {
+        const socket = new SockJS('/chat'); // Connect to WebSocket endpoint
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function () {
+            console.log("Connected to WebSocket");
+            // Subscribe to public chat messages
+            stompClient.subscribe('/topic/public', function (message) {
+                displayMessage(message.body); // Display user-friendly message
+            });
+        }, function (error) {
+            console.error("WebSocket connection failed:", error);
+        });
+    }
+
+    function displayMessage(jsonMessage) {
+    const messagesList = document.getElementById('messages');
+    const li = document.createElement('li');
+
+    // Parse the JSON string into an object
+    const message = JSON.parse(jsonMessage);
+
+    // Format the message
+    const sender = message.senderId === 0 ? "Public" : `User ${message.senderId}`;
+    const content = message.content || "No content";
+    const timestamp = message.timestamp
+        ? new Date(message.timestamp).toLocaleString()
+        : "Unknown time";
+
+    // Set the text content in a user-friendly format
+    li.textContent = `[${timestamp}] ${sender}: ${content}`;
+    messagesList.appendChild(li);
+}
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+
+        if (!message) {
+            alert("Message cannot be empty!");
+            return;
+        }
+
+        if (!stompClient) {
+            console.error("WebSocket is not connected.");
+            return;
+        }
+
+        stompClient.send('/app/sendMessage', {}, message);
+        messageInput.value = ''; // Clear the input field
+    }
+
+    connectWebSocket();
+</script>
+</body>
+</html>

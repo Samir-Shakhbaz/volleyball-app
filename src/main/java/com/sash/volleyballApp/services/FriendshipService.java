@@ -14,16 +14,38 @@ public class FriendshipService {
     @Autowired
     private FriendshipRepository friendshipRepository;
 
-    public Friendship sendFriendRequest(Long player1Id, Long player2Id) {
-        Friendship friendship = new Friendship(null, player1Id, player2Id, Status.PENDING);
-        return friendshipRepository.save(friendship);
+    public List<Friendship> getFriends(Long userId) {
+        return friendshipRepository.findByPlayer1IdOrPlayer2IdAndStatus(userId, userId, Status.ACCEPTED);
     }
 
-    public List<Friendship> getFriends(Long playerId) {
-        return friendshipRepository.findByPlayer1IdOrPlayer2IdAndStatus(playerId, playerId, Status.ACCEPTED);
+    public List<Friendship> getPendingRequests(Long userId) {
+        return friendshipRepository.findByPlayer2IdAndStatus(userId, Status.PENDING);
+    }
+
+    public Friendship sendFriendRequest(Long player1Id, Long player2Id) {
+        Friendship friendship = new Friendship();
+        friendship.setPlayer1Id(player1Id);
+        friendship.setPlayer2Id(player2Id);
+        friendship.setStatus(Friendship.Status.PENDING);
+        return friendshipRepository.save(friendship); // Return the saved Friendship object
+    }
+    public void acceptFriendRequest(Long friendshipId) {
+        Friendship friendship = friendshipRepository.findById(friendshipId).orElseThrow();
+        friendship.setStatus(Status.ACCEPTED);
+        friendshipRepository.save(friendship);
+    }
+
+    public void blockFriend(Long friendshipId) {
+        Friendship friendship = friendshipRepository.findById(friendshipId).orElseThrow();
+        friendship.setStatus(Status.BLOCKED);
+        friendshipRepository.save(friendship);
     }
 
     public void removeFriend(Long friendshipId) {
-        friendshipRepository.deleteById(friendshipId);
+        // Check if the friendship exists before deleting
+        if (!friendshipRepository.existsById(friendshipId)) {
+            throw new IllegalArgumentException("Friendship with id " + friendshipId + " does not exist.");
+        }
+        friendshipRepository.deleteById(friendshipId); // Deletes the friendship by its ID
     }
 }

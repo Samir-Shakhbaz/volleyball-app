@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessage {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class ChatMessage {
     private Long receiverId;
 
     @Column(nullable = false)
-    private String message;
+    private String content;
 
     @Column(nullable = false)
     private LocalDateTime timestamp;

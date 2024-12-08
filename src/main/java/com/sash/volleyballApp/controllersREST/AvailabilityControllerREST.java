@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/availability")
-public class AvailabilityController {
+public class AvailabilityControllerREST {
 
     @Autowired
     private AvailabilityService availabilityService;

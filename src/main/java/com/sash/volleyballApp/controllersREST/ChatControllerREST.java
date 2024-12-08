@@ -1,6 +1,6 @@
 package com.sash.volleyballApp.controllersREST;
 
-import com.sash.volleyballApp.models.ChatMessage;
+import com.sash.volleyballApp.models.Message;
 import com.sash.volleyballApp.services.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,25 +10,25 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/messages")
-public class ChatController {
+public class ChatControllerREST {
 
     @Autowired
     private ChatService chatService;
 
     @PostMapping
-    public ResponseEntity<ChatMessage> sendMessage(
+    public ResponseEntity<Message> sendMessage(
             @RequestParam Long senderId,
             @RequestParam Long receiverId,
             @RequestParam String message) {
-        ChatMessage chatMessage = chatService.sendMessage(senderId, receiverId, message);
+        Message chatMessage = chatService.sendMessage(senderId, receiverId, message);
         return ResponseEntity.ok(chatMessage);
     }
 
     @GetMapping
-    public ResponseEntity<List<ChatMessage>> getChatHistory(
+    public ResponseEntity<List<Message>> getChatHistory(
             @RequestParam Long player1Id,
             @RequestParam Long player2Id) {
-        List<ChatMessage> chatHistory = chatService.getChatHistory(player1Id, player2Id);
+        List<Message> chatHistory = chatService.getChatHistory(player1Id, player2Id);
         return ResponseEntity.ok(chatHistory);
     }
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/profiles")
-public class PlayerProfileController {
+public class PlayerProfileControllerREST {
 
     @Autowired
     private PlayerProfileService playerProfileService;
