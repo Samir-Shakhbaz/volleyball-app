@@ -7,6 +7,7 @@ import com.sash.volleyballApp.repositories.EventRepository;
 import com.sash.volleyballApp.repositories.PlayerProfileRepository;
 import com.sash.volleyballApp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,9 +45,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    // Fetch events for a specific user
     public List<Event> getUserEvents(Long userId) {
-        // Assuming you have a field in Event to associate with users (e.g., organizerId or participantIds)
+        // Assuming we have a field in Event to associate with users (e.g., organizerId or participantIds)
         return eventRepository.findByOrganizerId(userId); // Example query
     }
 
@@ -76,7 +76,6 @@ public class UserService {
     }
 
 
-
     public void registerUserWithProfile(User user, PlayerProfile playerProfile) {
         // Check if the username or email already exists
         if (userRepository.findByUsername(user.getUsername()) != null) {
@@ -90,13 +89,11 @@ public class UserService {
         // Encrypt the password
 //        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Save the user
         userRepository.save(user);
 
         // Link the PlayerProfile to the User
         playerProfile.setUser(user);
 
-        // Save the PlayerProfile
         playerProfileRepository.save(playerProfile);
     }
 
@@ -108,5 +105,8 @@ public class UserService {
         return user;
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }
 

@@ -54,7 +54,7 @@
 
 <script>
   let stompClient;
-  let senderId = 1; // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!Replace with the logged-in user's ID
+  let senderId = [[${loggedInUser.id}]]; // Injected logged-in user ID from the backend
   let receiverId = null;
 
   // Connect to WebSocket
@@ -104,7 +104,7 @@
       const content = messageInput.value.trim();
 
       if (!content || !receiverId) {
-          alert('Please enter a message and recipient ID');
+          alert('Please enter a valid message and recipient ID');
           return;
       }
 
