@@ -65,7 +65,7 @@ public class HomeController {
         model.addAttribute("eventNames", eventNames);
 //        model.addAttribute("weather", weatherInfo); // Add weather info to the model
 
-        return "index"; // Render the index page
+        return "index";
     }
 }
 

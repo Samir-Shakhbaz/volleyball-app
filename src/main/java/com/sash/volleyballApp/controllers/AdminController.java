@@ -110,7 +110,7 @@ public class AdminController {
             @RequestParam String genderFormat,
             @RequestParam String date,
             @RequestParam String time,
-            @RequestParam String facilityId, // Changed to String to handle "new"
+            @RequestParam String facilityId,
             @RequestParam(required = false) String newFacilityName,
             Model model) {
 
@@ -159,17 +159,29 @@ public class AdminController {
 
 
 
+//    @PostMapping("/user")
+//    public String addUser(User user) {
+//        userService.createUser(user);
+//        return "redirect:/admin/dashboard";
+//    }
+
     @PostMapping("/user")
-    public String addUser(User user) {
-        userService.createUser(user);
+    public String addUser(@ModelAttribute User user) {
+        userService.createUser(
+                user.getUsername(),
+                user.getPassword(),
+                user.getRole(),
+                user.getEmail()
+        );
         return "redirect:/admin/dashboard";
     }
+
 
     @GetMapping("/user/edit/{id}")
     public String editUser(@PathVariable Long id, Model model) {
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
-        return "edit-user"; // Create this template
+        return "edit-user";
     }
 
     @PostMapping("/user/update")
