@@ -8,9 +8,9 @@ import com.sash.volleyballApp.repositories.PlayerProfileRepository;
 import com.sash.volleyballApp.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.core.userdetails.UsernameNotFoundException;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +28,8 @@ public class UserService {
 //    @Autowired
 //    private BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private PlayerProfileRepository playerProfileRepository;
@@ -68,7 +68,7 @@ public class UserService {
     public void createUser(String username, String rawPassword, String role, String email) {
         User user = new User();
         user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(rawPassword));
+//        user.setPassword(passwordEncoder.encode(rawPassword));
         user.setPassword(rawPassword);
         user.setRole(role);
         user.setEmail(email);

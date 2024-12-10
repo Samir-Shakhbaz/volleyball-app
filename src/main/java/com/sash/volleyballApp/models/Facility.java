@@ -26,4 +26,13 @@ public class Facility {
 
     @Column(nullable = false)
     private Integer courts; // Number of courts
+
+    @Column(nullable = true)
+    private String organizationAffiliation; // Organization Affiliation(s)
+
+    @Column(nullable = true)
+    private String websiteUrl; // Website URL
+
+    @Column(nullable = true)
+    private String rentalRequirement; // Rental (required/optional/none)
 }

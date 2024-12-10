@@ -12,6 +12,6 @@ public class WeatherAPIResponse {
     String description;
     List<Forecast> forecast;
 
-
+    String message;
 
 }

@@ -68,10 +68,12 @@ public class AdminController {
         model.addAttribute("facilities", facilityService.getAllFacilities());
         model.addAttribute("eventStats", eventService.getEventStats());
 
+        // Fetch and add new facilities to the model
+        List<Facility> newFacilities = facilityService.getAllFacilities();
+        model.addAttribute("newFacilities", newFacilities);
+
         return "admin-dashboard";
     }
-
-
 
     @PostMapping("/facility")
     public String addFacility(Facility facility) {
@@ -157,8 +159,6 @@ public class AdminController {
         return "redirect:/admin/dashboard";
     }
 
-
-
 //    @PostMapping("/user")
 //    public String addUser(User user) {
 //        userService.createUser(user);
@@ -175,7 +175,6 @@ public class AdminController {
         );
         return "redirect:/admin/dashboard";
     }
-
 
     @GetMapping("/user/edit/{id}")
     public String editUser(@PathVariable Long id, Model model) {
@@ -202,6 +201,5 @@ public class AdminController {
         model.addAttribute("users", users);
         return "admin-dashboard";
     }
-
 
 }
