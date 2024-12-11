@@ -13,6 +13,8 @@
 
 <!-- Login Form -->
 <form action="/login" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" placeholder="Enter your username" required>
 

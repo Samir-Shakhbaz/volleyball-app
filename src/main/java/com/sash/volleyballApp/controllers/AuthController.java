@@ -1,6 +1,7 @@
 package com.sash.volleyballApp.controllers;
 
 import com.sash.volleyballApp.models.PlayerProfile;
+
 import com.sash.volleyballApp.models.User;
 import com.sash.volleyballApp.services.UserService;
 import com.sash.volleyballApp.services.PlayerProfileService;
@@ -32,16 +33,29 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user, @ModelAttribute PlayerProfile playerProfile, Model model) {
+    public String registerUser(@RequestParam String username,
+                               @RequestParam String email,
+                               @RequestParam String password,
+                               @RequestParam(defaultValue = "PLAYER") String role,
+                               Model model) {
         try {
-            // Attempt to register user and profile
-            userService.registerUserWithProfile(user, playerProfile);
-            return "redirect:/dashboard"; // Redirect to login on success
-        } catch (IllegalArgumentException e) {
-            // Add error message to the model and reload the form
-            model.addAttribute("error", e.getMessage());
-            return "register";
+            userService.createUser(username, password, role, email);
+            return "redirect:/login"; // Redirect to login on success
+        } catch (Exception e) {
+            model.addAttribute("error", "Registration failed. Try again.");
+            return "register"; // Reload registration page on failure
         }
+    }
+
+    @PostMapping("/user")
+    public String addUser(@ModelAttribute User user) {
+        userService.createUser(
+                user.getUsername(),
+                user.getPassword(),
+                user.getRole(),
+                user.getEmail()
+        );
+        return "redirect:/admin/dashboard";
     }
 
     @GetMapping("/login")
@@ -50,17 +64,17 @@ public class AuthController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String login(@RequestParam String username,
-                        @RequestParam String password,
-                        Model model) {
-        try {
-            User user = userService.authenticate(username, password); // Add your login logic here
-            return "redirect:/dashboard"; // Redirect to the dashboard on success
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("error", "Invalid username or password.");
-            return "login";
-        }
-    }
+//    @PostMapping("/login")
+//    public String login(@RequestParam String username,
+//                        @RequestParam String password,
+//                        Model model) {
+//        try {
+//            User user = userService.authenticate(username, password); // Add your login logic here
+//            return "redirect:/"; // Redirect to the dashboard on success
+//        } catch (IllegalArgumentException e) {
+//            model.addAttribute("error", "Invalid username or password.");
+//            return "login";
+//        }
+//    }
 
 }

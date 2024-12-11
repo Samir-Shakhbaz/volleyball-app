@@ -2,31 +2,36 @@ package com.sash.volleyballApp.config;
 
 import com.sash.volleyballApp.models.User;
 import com.sash.volleyballApp.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Component
-public class AdminUserInitializer implements CommandLineRunner {
+@Configuration
+public class AdminUserInitializer {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    public AdminUserInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-    @Override
-    public void run(String... args) throws Exception {
-        if (userRepository.findByUsername("admin") == null) {
-            User admin = new User();
-            admin.setUsername("admin");
-//            admin.setPassword(passwordEncoder.encode("admin")); // Encode the password
-            admin.setPassword("admin");
-            admin.setRole("ROLE_ADMIN"); // Assign the admin role
-            admin.setEmail("admin@example.com");
-            userRepository.save(admin);
-            System.out.println("Admin user created with username: admin and password: admin");
-        }
+    @Bean
+    public CommandLineRunner createDefaultAdmin() {
+        return args -> {
+            if (userRepository.findByUsername("admin") == null) {
+                User admin = new User();
+                admin.setUsername("admin");
+                admin.setPassword(passwordEncoder.encode("admin"));
+                admin.setRole("ADMIN");
+                admin.setEmail("admin@admin.com");
+                userRepository.save(admin);
+                System.out.println("Default admin user created: username=admin, password=admin123");
+            } else {
+                System.out.println("Admin user already exists.");
+            }
+        };
     }
 }

@@ -11,13 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.core.userdetails.UsernameNotFoundException;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -28,8 +35,8 @@ public class UserService {
 //    @Autowired
 //    private BCryptPasswordEncoder passwordEncoder;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private PlayerProfileRepository playerProfileRepository;
@@ -64,19 +71,17 @@ public class UserService {
 //        return userRepository.save(user);
 //    }
 
-    @Transactional
-    public void createUser(String username, String rawPassword, String role, String email) {
+    public void createUser(String username, String password, String role, String email) {
+        System.out.println("createUser called with: " + username + ", " + email + ", " + role);
         User user = new User();
         user.setUsername(username);
-//        user.setPassword(passwordEncoder.encode(rawPassword));
-        user.setPassword(rawPassword);
+        user.setPassword(passwordEncoder.encode(password)); // Encrypt the password
         user.setRole(role);
         user.setEmail(email);
-//        user.setPhone(phone);
-//        user.setPasswordChangeRequired(true);
-
-        userRepository.save(user);
+        userRepository.save(user); // Persist the user
     }
+
+
 
 
     public User getUserById(Long id) {
@@ -107,7 +112,6 @@ public class UserService {
             throw new IllegalArgumentException("Email is already in use");
         }
 
-        // Encrypt the password
 //        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
@@ -124,6 +128,11 @@ public class UserService {
 //            throw new IllegalArgumentException("Invalid username or password");
 //        }
         return user;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username);
     }
 
     public User findByUsername(String username) {
