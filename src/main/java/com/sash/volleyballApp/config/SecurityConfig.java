@@ -28,12 +28,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(withDefaults())
-                .cors(withDefaults())
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**") // Disable CSRF for /api/** endpoints
+                )
+                .cors(withDefaults()) // Enable CORS
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/register", "/chat/websocket").permitAll() // Allow these endpoints
-                        .requestMatchers("/admin/dashboard").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/", "/register", "/chat/websocket").permitAll() // Public endpoints
+                        .requestMatchers("/api/register", "/api/login").permitAll() // Allow all API endpoints
+                        .requestMatchers("/admin/dashboard").hasRole("ADMIN") // Restrict admin dashboard
+                        .requestMatchers("/groups/**").authenticated() // Requires authentication
+                        .anyRequest().authenticated() // All other requests require authentication
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -41,10 +45,12 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
-                .logout((logout) -> logout.logoutSuccessUrl("/"));
+                .logout(logout -> logout.logoutSuccessUrl("/")); // Logout success redirects to homepage
 
         return http.build();
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

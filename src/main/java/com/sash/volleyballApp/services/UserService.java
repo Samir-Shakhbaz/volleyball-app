@@ -71,17 +71,19 @@ public class UserService implements UserDetailsService {
 //        return userRepository.save(user);
 //    }
 
-    public void createUser(String username, String password, String role, String email) {
-        System.out.println("createUser called with: " + username + ", " + email + ", " + role);
+    public void createUser(String username, String password, String email, String gender, String homecity) {
+        System.out.println("createUser called with: " + username + ", " + email + ", " + gender + ", " + homecity);
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password)); // Encrypt the password
-        user.setRole(role);
         user.setEmail(email);
+        user.setGender(gender);
+        user.setHomeCity(homecity);
+        user.setRole("PLAYER"); //
+
         userRepository.save(user); // Persist the user
     }
-
-
 
 
     public User getUserById(Long id) {
@@ -124,9 +126,9 @@ public class UserService implements UserDetailsService {
 
     public User authenticate(String username, String password) {
         User user = userRepository.findByUsername(username);
-//        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
-//            throw new IllegalArgumentException("Invalid username or password");
-//        }
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("Invalid username or password");
+        }
         return user;
     }
 
@@ -138,5 +140,6 @@ public class UserService implements UserDetailsService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
 }
 

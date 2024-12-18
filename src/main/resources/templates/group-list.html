@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Your Groups</title>
+</head>
+<body>
+<h1>Your Groups</h1>
+<ul>
+    <li th:each="group : ${groups}">
+        <strong th:text="${group.name}"></strong>: <span th:text="${group.description}"></span>
+    </li>
+</ul>
+</body>
+</html>

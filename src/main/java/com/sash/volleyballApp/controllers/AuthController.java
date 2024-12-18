@@ -36,10 +36,12 @@ public class AuthController {
     public String registerUser(@RequestParam String username,
                                @RequestParam String email,
                                @RequestParam String password,
+                               @RequestParam String gender,
+                               @RequestParam String homeCity,
                                @RequestParam(defaultValue = "PLAYER") String role,
                                Model model) {
         try {
-            userService.createUser(username, password, role, email);
+            userService.createUser(username, password, email, gender, homeCity);
             return "redirect:/login"; // Redirect to login on success
         } catch (Exception e) {
             model.addAttribute("error", "Registration failed. Try again.");
@@ -52,11 +54,13 @@ public class AuthController {
         userService.createUser(
                 user.getUsername(),
                 user.getPassword(),
-                user.getRole(),
-                user.getEmail()
+                user.getEmail(),
+                user.getGender(),
+                user.getHomeCity()
         );
         return "redirect:/admin/dashboard";
     }
+
 
     @GetMapping("/login")
     public String showLoginPage(Model model) {
@@ -64,17 +68,17 @@ public class AuthController {
         return "login";
     }
 
-//    @PostMapping("/login")
-//    public String login(@RequestParam String username,
-//                        @RequestParam String password,
-//                        Model model) {
-//        try {
-//            User user = userService.authenticate(username, password); // Add your login logic here
-//            return "redirect:/"; // Redirect to the dashboard on success
-//        } catch (IllegalArgumentException e) {
-//            model.addAttribute("error", "Invalid username or password.");
-//            return "login";
-//        }
-//    }
+    @PostMapping("/login")
+    public String login(@RequestParam String username,
+                        @RequestParam String password,
+                        Model model) {
+        try {
+            User user = userService.authenticate(username, password);
+            return "redirect:/"; // Redirect to the dashboard on success
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", "Invalid username or password.");
+            return "login";
+        }
+    }
 
 }

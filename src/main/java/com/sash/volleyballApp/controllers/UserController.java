@@ -96,4 +96,12 @@ public class UserController {
         playerProfileService.updateProfile(profile);
         return "redirect:/user/dashboard";
     }
+
+    @GetMapping("/users")
+    public String showAllUsers(Model model) {
+        List<User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "user-list";
+    }
+
 }

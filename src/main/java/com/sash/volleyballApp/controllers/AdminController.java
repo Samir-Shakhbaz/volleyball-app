@@ -170,8 +170,9 @@ public class AdminController {
         userService.createUser(
                 user.getUsername(),
                 user.getPassword(),
-                user.getRole(),
-                user.getEmail()
+                user.getEmail(),
+                user.getGender(),
+                user.getHomeCity()
         );
         return "redirect:/admin/dashboard";
     }
